@@ -1,0 +1,790 @@
+<Window x:Class="ProfileOnPC.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:models="clr-namespace:ProfileOnPC.Models"
+        Title="ProfileOnPC"
+        Width="1200"
+        Height="840"
+        MinWidth="1040"
+        MinHeight="720"
+        WindowStartupLocation="CenterScreen"
+        Closing="MainWindow_OnClosing">
+    <Window.Resources>
+        <DataTemplate x:Key="CloseItemTemplate">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{Binding}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                <Button Grid.Column="1"
+                        Content="×"
+                        Width="28"
+                        Height="26"
+                        Padding="0"
+                        Margin="8,0,0,0"
+                        Tag="{Binding}"
+                        CommandParameter="Close"
+                        Click="RemoveItem_OnClick"/>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="StartItemTemplate">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{Binding}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                <Button Grid.Column="1"
+                        Content="×"
+                        Width="28"
+                        Height="26"
+                        Padding="0"
+                        Margin="8,0,0,0"
+                        Tag="{Binding}"
+                        CommandParameter="Start"
+                        Click="RemoveItem_OnClick"/>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="UrlItemTemplate">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{Binding}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                <Button Grid.Column="1"
+                        Content="×"
+                        Width="28"
+                        Height="26"
+                        Padding="0"
+                        Margin="8,0,0,0"
+                        Tag="{Binding}"
+                        CommandParameter="Url"
+                        Click="RemoveItem_OnClick"/>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="TriggerItemTemplate">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{Binding}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                <Button Grid.Column="1"
+                        Content="×"
+                        Width="28"
+                        Height="26"
+                        Padding="0"
+                        Margin="8,0,0,0"
+                        Tag="{Binding}"
+                        CommandParameter="Trigger"
+                        Click="RemoveItem_OnClick"/>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="PriorityRuleTemplate">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{Binding ProcessName}"
+                           VerticalAlignment="Center"
+                           TextTrimming="CharacterEllipsis"/>
+                <ComboBox Grid.Column="1"
+                          Width="152"
+                          MinHeight="30"
+                          Margin="8,0,0,0"
+                          ItemsSource="{x:Static models:ProcessPriorities.All}"
+                          SelectedValuePath="Value"
+                          SelectedValue="{Binding Priority, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Label}" VerticalAlignment="Center"/>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <Button Grid.Column="2"
+                        Content="×"
+                        Width="28"
+                        Height="26"
+                        Padding="0"
+                        Margin="8,0,0,0"
+                        Tag="{Binding}"
+                        CommandParameter="Priority"
+                        Click="RemoveItem_OnClick"/>
+            </Grid>
+        </DataTemplate>
+    </Window.Resources>
+
+    <Grid Background="{DynamicResource WindowBackgroundBrush}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="270"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Sidebar -->
+        <Border Grid.Column="0"
+                Background="{DynamicResource SidebarBackgroundBrush}"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="0,0,1,0">
+            <Grid Margin="16">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel Margin="4,4,4,16">
+                    <TextBlock Text="ProfileOnPC" FontSize="21" FontWeight="SemiBold"/>
+                    <TextBlock Text="Профили рабочего стола"
+                               Margin="0,3,0,0"
+                               Style="{StaticResource SecondaryTextStyle}"/>
+                </StackPanel>
+
+                <ListBox x:Name="ProfileList"
+                         Grid.Row="1"
+                         SelectionChanged="ProfileList_OnSelectionChanged">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="30"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Width="22"
+                                        Height="22"
+                                        CornerRadius="6"
+                                        Background="{DynamicResource AccentBrush}"
+                                        VerticalAlignment="Center">
+                                    <TextBlock Text="P"
+                                               Foreground="White"
+                                               FontSize="11"
+                                               FontWeight="Bold"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"/>
+                                </Border>
+                                <TextBlock Grid.Column="1"
+                                           Text="{Binding Name}"
+                                           VerticalAlignment="Center"
+                                           FontWeight="SemiBold"
+                                           TextTrimming="CharacterEllipsis"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+
+                <StackPanel Grid.Row="2">
+                    <Button Content="+  Новый профиль"
+                            Style="{StaticResource SidebarButtonStyle}"
+                            Click="AddProfile_OnClick"/>
+                    <Button Content="⚙  Настройки"
+                            Style="{StaticResource SidebarButtonStyle}"
+                            Click="Settings_OnClick"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Welcome -->
+        <Grid x:Name="WelcomePanel" Grid.Column="1">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Border Width="68"
+                        Height="68"
+                        CornerRadius="18"
+                        Background="{DynamicResource AccentBrush}"
+                        HorizontalAlignment="Center">
+                    <TextBlock Text="P"
+                               Foreground="White"
+                               FontSize="34"
+                               FontWeight="Bold"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"/>
+                </Border>
+                <TextBlock Text="Создайте первый профиль"
+                           FontSize="24"
+                           FontWeight="SemiBold"
+                           HorizontalAlignment="Center"
+                           Margin="0,18,0,5"/>
+                <TextBlock Text="Настройте приложения, сайты и оптимизацию для одного клика."
+                           Style="{StaticResource SecondaryTextStyle}"
+                           HorizontalAlignment="Center"/>
+                <Button Content="Создать профиль"
+                        Width="170"
+                        HorizontalContentAlignment="Center"
+                        Style="{StaticResource PrimaryButtonStyle}"
+                        Margin="0,22,0,0"
+                        Click="AddProfile_OnClick"/>
+            </StackPanel>
+        </Grid>
+
+        <!-- Editor -->
+        <Grid x:Name="EditorPanel" Grid.Column="1" Visibility="Collapsed" Margin="26,22,26,20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <TextBlock x:Name="ProfileNameText" Style="{StaticResource PageTitleStyle}"/>
+                    <TextBlock Text="Описание профиля" Style="{StaticResource SecondaryTextStyle}"/>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Top">
+                    <TextBlock x:Name="ActiveProfileText"
+                               Visibility="Collapsed"
+                               Margin="0,0,12,0"
+                               FontWeight="SemiBold"
+                               VerticalAlignment="Center"
+                               Foreground="{DynamicResource AccentBrush}"/>
+                    <Border CornerRadius="10"
+                            Padding="12,7"
+                            Background="{DynamicResource SurfaceAltBrush}">
+                        <TextBlock Text="Windows 11 · x64" Style="{StaticResource SecondaryTextStyle}"/>
+                    </Border>
+                </StackPanel>
+            </Grid>
+
+            <TextBox x:Name="DescriptionBox"
+                     Grid.Row="1"
+                     Height="42"
+                     Margin="0,12,0,12"
+                     ToolTip="Краткое описание профиля"/>
+
+            <TabControl Grid.Row="2">
+                <!-- ============================================ Процессы и сайты -->
+                <TabItem Header="Процессы и сайты">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="0,10,8,10">
+                        <StackPanel>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="14"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Border Grid.Column="0" Style="{StaticResource CardBorderStyle}">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="170"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <StackPanel>
+                                            <TextBlock Text="Закрыть при активации"
+                                                       Style="{StaticResource SectionTitleStyle}"/>
+                                            <TextBlock Text="Принудительно завершает выбранные процессы."
+                                                       Style="{StaticResource SecondaryTextStyle}"/>
+                                        </StackPanel>
+                                        <ListBox x:Name="CloseList"
+                                                 Grid.Row="1"
+                                                 Margin="0,12,0,10"
+                                                 ItemTemplate="{StaticResource CloseItemTemplate}"/>
+                                        <Grid Grid.Row="2">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBox x:Name="CloseInput"
+                                                     ToolTip="Например: discord.exe"
+                                                     KeyDown="CloseInput_OnKeyDown"/>
+                                            <Button Grid.Column="1"
+                                                    Content="…"
+                                                    Style="{StaticResource IconButtonStyle}"
+                                                    Margin="7,0,0,0"
+                                                    ToolTip="Выбрать .exe"
+                                                    Click="BrowseClose_OnClick"/>
+                                            <Button Grid.Column="2"
+                                                    Content="+"
+                                                    Style="{StaticResource IconButtonStyle}"
+                                                    Background="{DynamicResource AccentBrush}"
+                                                    Foreground="White"
+                                                    BorderThickness="0"
+                                                    Margin="7,0,0,0"
+                                                    Click="AddClose_OnClick"/>
+                                        </Grid>
+                                    </Grid>
+                                </Border>
+
+                                <Border Grid.Column="2" Style="{StaticResource CardBorderStyle}">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="170"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <StackPanel>
+                                            <TextBlock Text="Запустить при активации"
+                                                       Style="{StaticResource SectionTitleStyle}"/>
+                                            <TextBlock Text="Уже запущенные приложения не дублируются."
+                                                       Style="{StaticResource SecondaryTextStyle}"/>
+                                        </StackPanel>
+                                        <ListBox x:Name="StartList"
+                                                 Grid.Row="1"
+                                                 Margin="0,12,0,10"
+                                                 ItemTemplate="{StaticResource StartItemTemplate}"/>
+                                        <Grid Grid.Row="2">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBox x:Name="StartInput"
+                                                     ToolTip="Полный путь или команда, например notepad.exe"
+                                                     KeyDown="StartInput_OnKeyDown"/>
+                                            <Button Grid.Column="1"
+                                                    Content="…"
+                                                    Style="{StaticResource IconButtonStyle}"
+                                                    Margin="7,0,0,0"
+                                                    ToolTip="Выбрать .exe"
+                                                    Click="BrowseStart_OnClick"/>
+                                            <Button Grid.Column="2"
+                                                    Content="+"
+                                                    Style="{StaticResource IconButtonStyle}"
+                                                    Background="{DynamicResource AccentBrush}"
+                                                    Foreground="White"
+                                                    BorderThickness="0"
+                                                    Margin="7,0,0,0"
+                                                    Click="AddStart_OnClick"/>
+                                        </Grid>
+                                    </Grid>
+                                </Border>
+                            </Grid>
+
+                            <Border Style="{StaticResource CardBorderStyle}" Margin="0,14,0,0">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="1.3*"/>
+                                        <ColumnDefinition Width="14"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="Открыть сайты"
+                                                   Style="{StaticResource SectionTitleStyle}"/>
+                                        <TextBlock Text="Ссылки откроются в браузере по умолчанию."
+                                                   Style="{StaticResource SecondaryTextStyle}"/>
+                                        <Grid Margin="0,12,0,0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBox x:Name="UrlInput"
+                                                     ToolTip="https://example.com"
+                                                     KeyDown="UrlInput_OnKeyDown"/>
+                                            <Button Grid.Column="1"
+                                                    Content="+"
+                                                    Style="{StaticResource IconButtonStyle}"
+                                                    Background="{DynamicResource AccentBrush}"
+                                                    Foreground="White"
+                                                    BorderThickness="0"
+                                                    Margin="7,0,0,0"
+                                                    Click="AddUrl_OnClick"/>
+                                        </Grid>
+                                    </StackPanel>
+                                    <ListBox x:Name="UrlList"
+                                             Grid.Column="2"
+                                             Height="116"
+                                             ItemTemplate="{StaticResource UrlItemTemplate}"/>
+                                </Grid>
+                            </Border>
+
+                            <Border Style="{StaticResource CardBorderStyle}" Margin="0,14,0,0">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="1.3*"/>
+                                        <ColumnDefinition Width="14"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="Приоритет процессора"
+                                                   Style="{StaticResource SectionTitleStyle}"/>
+                                        <TextBlock Text="Process.PriorityClass применяется к уже запущенным процессам в момент активации профиля."
+                                                   Style="{StaticResource SecondaryTextStyle}"/>
+                                        <Grid Margin="0,12,0,0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBox x:Name="PriorityInput"
+                                                     ToolTip="Например: game.exe"
+                                                     KeyDown="PriorityInput_OnKeyDown"/>
+                                            <Button Grid.Column="1"
+                                                    Content="…"
+                                                    Style="{StaticResource IconButtonStyle}"
+                                                    Margin="7,0,0,0"
+                                                    ToolTip="Выбрать .exe"
+                                                    Click="BrowsePriority_OnClick"/>
+                                            <Button Grid.Column="2"
+                                                    Content="+"
+                                                    Style="{StaticResource IconButtonStyle}"
+                                                    Background="{DynamicResource AccentBrush}"
+                                                    Foreground="White"
+                                                    BorderThickness="0"
+                                                    Margin="7,0,0,0"
+                                                    Click="AddPriority_OnClick"/>
+                                        </Grid>
+                                    </StackPanel>
+                                    <ListBox x:Name="PriorityList"
+                                             Grid.Column="2"
+                                             Height="116"
+                                             ItemTemplate="{StaticResource PriorityRuleTemplate}"/>
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
+                </TabItem>
+
+                <!-- ================================= Очистка и оптимизация -->
+                <TabItem Header="Очистка и оптимизация">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="0,10,8,10">
+                        <StackPanel>
+                            <Border x:Name="AdminBanner"
+                                    Style="{StaticResource CardBorderStyle}"
+                                    Margin="0,0,0,14"
+                                    Visibility="Collapsed">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="Нет прав администратора"
+                                                   Style="{StaticResource SectionTitleStyle}"/>
+                                        <TextBlock Style="{StaticResource SecondaryTextStyle}"
+                                                   Text="Prefetch, SoftwareDistribution, Standby List и служба SysMain требуют повышения прав. Остальные действия работают и без него."/>
+                                    </StackPanel>
+                                    <Button Grid.Column="1"
+                                            Content="Перезапустить от админа"
+                                            VerticalAlignment="Center"
+                                            Margin="12,0,0,0"
+                                            Click="Elevate_OnClick"/>
+                                </Grid>
+                            </Border>
+
+                            <Border Style="{StaticResource CardBorderStyle}">
+                                <StackPanel>
+                                    <TextBlock Text="Применять при каждом включении профиля"
+                                               Style="{StaticResource SectionTitleStyle}"/>
+                                    <TextBlock Text="Отметьте действия один раз. Выбор сохраняется отдельно для каждого профиля."
+                                               Style="{StaticResource SecondaryTextStyle}"
+                                               Margin="0,0,0,10"/>
+                                    <UniformGrid Columns="2">
+                                        <CheckBox x:Name="ClearTempCheck"
+                                                  Content="Очистить временные файлы"/>
+                                        <CheckBox x:Name="BrowserCacheCheck"
+                                                  Content="Очистить кеш браузеров"/>
+                                        <CheckBox x:Name="RecycleBinCheck"
+                                                  Content="Очистить корзину"/>
+                                        <CheckBox x:Name="DnsCheck"
+                                                  Content="Сбросить DNS (ipconfig /flushdns)"/>
+                                        <CheckBox x:Name="PrefetchCheck"
+                                                  Content="Очистить Prefetch"/>
+                                        <CheckBox x:Name="SoftDistCheck"
+                                                  Content="Очистить SoftwareDistribution"/>
+                                        <CheckBox x:Name="StandbyCheck"
+                                                  Content="Очистить Standby List (RAM)"/>
+                                        <CheckBox x:Name="GameDvrCheck"
+                                                  Content="Отключить Game DVR"/>
+                                        <CheckBox x:Name="AnimationsCheck"
+                                                  Content="Отключить анимации Windows"/>
+                                    </UniformGrid>
+                                </StackPanel>
+                            </Border>
+
+                            <Grid Margin="0,14,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="14"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Border Grid.Column="0" Style="{StaticResource CardBorderStyle}">
+                                    <StackPanel>
+                                        <TextBlock Text="Схема питания"
+                                                   Style="{StaticResource SectionTitleStyle}"/>
+                                        <TextBlock Text="Переключается через powercfg при активации профиля."
+                                                   Style="{StaticResource SecondaryTextStyle}"
+                                                   Margin="0,0,0,8"/>
+                                        <ComboBox x:Name="PowerPlanBox">
+                                            <ComboBoxItem Content="Не изменять" Tag="keep"/>
+                                            <ComboBoxItem Content="Сбалансированная" Tag="balanced"/>
+                                            <ComboBoxItem Content="Высокая производительность" Tag="high"/>
+                                            <ComboBoxItem Content="Ultimate Performance" Tag="ultimate"/>
+                                        </ComboBox>
+                                        <TextBlock x:Name="PowerPlanStatusText"
+                                                   Style="{StaticResource SecondaryTextStyle}"
+                                                   Margin="0,8,0,0"
+                                                   Text="Текущая схема определяется при запуске."/>
+                                    </StackPanel>
+                                </Border>
+
+                                <Border Grid.Column="2" Style="{StaticResource CardBorderStyle}">
+                                    <StackPanel>
+                                        <TextBlock Text="Служба SysMain (Superfetch)"
+                                                   Style="{StaticResource SectionTitleStyle}"/>
+                                        <TextBlock Text="Остановка и отключение ускоряют отклик на SSD, но замедляют первый запуск приложений."
+                                                   Style="{StaticResource SecondaryTextStyle}"
+                                                   Margin="0,0,0,8"/>
+                                        <ComboBox x:Name="SysMainBox">
+                                            <ComboBoxItem Content="Не изменять" Tag="keep"/>
+                                            <ComboBoxItem Content="Включить (как в Windows по умолчанию)" Tag="enable"/>
+                                            <ComboBoxItem Content="Отключить и запретить запуск" Tag="disable"/>
+                                        </ComboBox>
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+
+                            <Border Style="{StaticResource CardBorderStyle}" Margin="0,14,0,0">
+                                <StackPanel>
+                                    <TextBlock Text="Фоновые приложения"
+                                               Style="{StaticResource SectionTitleStyle}"/>
+                                    <TextBlock Style="{StaticResource SecondaryTextStyle}"
+                                               Text="Приложения из списка «Запустить при активации» остаются на рабочем столе. Остальные окна можно свернуть или скрыть — скрытые возвращаются из меню значка в трее."/>
+                                    <ComboBox x:Name="WindowActionBox" Margin="0,10,0,0">
+                                        <ComboBoxItem Content="Не изменять" Tag="none"/>
+                                        <ComboBoxItem Content="Свернуть окна на панель задач" Tag="minimize"/>
+                                        <ComboBoxItem Content="Скрыть окна в трей ProfileOnPC" Tag="hide"/>
+                                    </ComboBox>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Style="{StaticResource CardBorderStyle}" Margin="0,14,0,0">
+                                <StackPanel>
+                                    <TextBlock Text="Готовые наборы" Style="{StaticResource SectionTitleStyle}"/>
+                                    <TextBlock Text="Пресет только выставляет галочки — изменения применяются при активации."
+                                               Style="{StaticResource SecondaryTextStyle}"
+                                               Margin="0,0,0,12"/>
+                                    <WrapPanel>
+                                        <Button Content="Игровой"
+                                                Margin="0,0,8,8"
+                                                Click="GamingPreset_OnClick"/>
+                                        <Button Content="Очистка"
+                                                Margin="0,0,8,8"
+                                                Click="CleanupPreset_OnClick"/>
+                                        <Button Content="Снять все"
+                                                Margin="0,0,8,8"
+                                                Click="ResetPreset_OnClick"/>
+                                        <Button Content="Выполнить очистку сейчас"
+                                                Margin="0,0,8,8"
+                                                Click="RunOptimization_OnClick"/>
+                                    </WrapPanel>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Style="{StaticResource CardBorderStyle}" Margin="0,14,0,0">
+                                <StackPanel>
+                                    <TextBlock Text="Важно" Style="{StaticResource SectionTitleStyle}"/>
+                                    <TextBlock Style="{StaticResource SecondaryTextStyle}"
+                                               Text="Занятые файлы будут пропущены. Перед очисткой SoftwareDistribution службы Windows Update и BITS останавливаются и запускаются снова. Отключение анимаций полностью применяется после повторного входа в Windows."/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
+                </TabItem>
+
+                <!-- ============================================ Автоматизация -->
+                <TabItem Header="Автоматизация">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="0,10,8,10">
+                        <StackPanel>
+                            <Border Style="{StaticResource CardBorderStyle}">
+                                <StackPanel>
+                                    <TextBlock Text="Горячая клавиша профиля"
+                                               Style="{StaticResource SectionTitleStyle}"/>
+                                    <TextBlock Style="{StaticResource SecondaryTextStyle}"
+                                               Text="Щёлкните по полю и нажмите комбинацию. Нужен Ctrl, Alt или Win — одиночные клавиши не перехватываются."/>
+                                    <Grid Margin="0,10,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBox x:Name="HotkeyBox"
+                                                 IsReadOnly="True"
+                                                 Cursor="Hand"
+                                                 ToolTip="Нажмите комбинацию клавиш"
+                                                 PreviewKeyDown="HotkeyBox_OnPreviewKeyDown"/>
+                                        <Button Grid.Column="1"
+                                                Content="Сбросить"
+                                                Margin="8,0,0,0"
+                                                Click="ClearHotkey_OnClick"/>
+                                    </Grid>
+                                    <TextBlock x:Name="HotkeyStatusText"
+                                               Style="{StaticResource SecondaryTextStyle}"
+                                               Margin="0,8,0,0"
+                                               Text="Комбинация не задана"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Style="{StaticResource CardBorderStyle}" Margin="0,14,0,0">
+                                <StackPanel>
+                                    <TextBlock Text="Авто-активация по запуску приложений"
+                                               Style="{StaticResource SectionTitleStyle}"/>
+                                    <TextBlock Style="{StaticResource SecondaryTextStyle}"
+                                               Text="Профиль активируется, когда появляется новый процесс из списка. Уже запущенные приложения триггером не считаются."/>
+                                    <CheckBox x:Name="TriggerEnableCheck"
+                                              Margin="0,10,0,0"
+                                              Content="Включить авто-активацию для этого профиля"/>
+                                    <ListBox x:Name="TriggerList"
+                                             Height="120"
+                                             Margin="0,10,0,10"
+                                             ItemTemplate="{StaticResource TriggerItemTemplate}"/>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBox x:Name="TriggerInput"
+                                                 ToolTip="Например: game.exe"
+                                                 KeyDown="TriggerInput_OnKeyDown"/>
+                                        <Button Grid.Column="1"
+                                                Content="…"
+                                                Style="{StaticResource IconButtonStyle}"
+                                                Margin="7,0,0,0"
+                                                ToolTip="Выбрать .exe"
+                                                Click="BrowseTrigger_OnClick"/>
+                                        <Button Grid.Column="2"
+                                                Content="+"
+                                                Style="{StaticResource IconButtonStyle}"
+                                                Background="{DynamicResource AccentBrush}"
+                                                Foreground="White"
+                                                BorderThickness="0"
+                                                Margin="7,0,0,0"
+                                                Click="AddTrigger_OnClick"/>
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Style="{StaticResource CardBorderStyle}" Margin="0,14,0,0">
+                                <StackPanel>
+                                    <TextBlock Text="Уведомления" Style="{StaticResource SectionTitleStyle}"/>
+                                    <CheckBox x:Name="NotifyCheck"
+                                              Content="Показывать уведомление в трее после активации профиля"/>
+                                    <TextBlock Style="{StaticResource SecondaryTextStyle}"
+                                               Text="Уведомления также можно отключить глобально в настройках приложения."/>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Style="{StaticResource CardBorderStyle}" Margin="0,14,0,0">
+                                <StackPanel>
+                                    <TextBlock Text="Как это работает" Style="{StaticResource SectionTitleStyle}"/>
+                                    <TextBlock Style="{StaticResource SecondaryTextStyle}"
+                                               Text="Мониторинг процессов выполняется раз в 2 секунды. Повторный запуск того же профиля игнорируется 12 секунд. Горячие клавиши и триггеры работают, пока приложение запущено, в том числе свёрнутым в трей."/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
+                </TabItem>
+
+                <!-- ================================================ История -->
+                <TabItem Header="История">
+                    <Grid Margin="0,10,8,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="Открыть журнал"
+                                    Margin="0,0,8,0"
+                                    Click="OpenLogFolder_OnClick"/>
+                            <Button Content="Очистить историю"
+                                    Click="ClearHistory_OnClick"/>
+                            <TextBlock x:Name="HistoryCountText"
+                                       Style="{StaticResource SecondaryTextStyle}"
+                                       Margin="12,0,0,0"
+                                       VerticalAlignment="Center"
+                                       Text="Пока нет активаций"/>
+                        </StackPanel>
+
+                        <Grid Grid.Row="1" Margin="0,10,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1.1*"/>
+                                <ColumnDefinition Width="14"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Border Grid.Column="0" Style="{StaticResource CardBorderStyle}">
+                                <ListBox x:Name="HistoryList"
+                                         SelectionChanged="HistoryList_OnSelectionChanged">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Margin="2,1">
+                                                <TextBlock Text="{Binding Title}"
+                                                           FontWeight="SemiBold"
+                                                           TextTrimming="CharacterEllipsis"/>
+                                                <TextBlock Text="{Binding Summary}"
+                                                           Style="{StaticResource SecondaryTextStyle}"
+                                                           Margin="0,2,0,0"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </Border>
+
+                            <Border Grid.Column="2" Style="{StaticResource CardBorderStyle}">
+                                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                    <TextBlock x:Name="HistoryDetailsText"
+                                               TextWrapping="Wrap"
+                                               Text="Выберите запись слева, чтобы увидеть подробности."/>
+                                </ScrollViewer>
+                            </Border>
+                        </Grid>
+                    </Grid>
+                </TabItem>
+            </TabControl>
+
+            <Grid Grid.Row="3" Margin="0,14,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock x:Name="StatusText"
+                               Text="Готово к работе"
+                               Foreground="{DynamicResource SecondaryTextBrush}"/>
+                    <ProgressBar x:Name="ActivityProgress"
+                                 Height="3"
+                                 Margin="0,7,20,0"
+                                 IsIndeterminate="True"
+                                 Visibility="Collapsed"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button x:Name="UndoButton"
+                            Content="↩ Вернуть как было"
+                            Width="178"
+                            IsEnabled="False"
+                            ToolTip="Откатить изменения системы, сделанные при активации"
+                            Click="UndoActivation_OnClick"/>
+                    <Button Content="Удалить"
+                            Width="105"
+                            Style="{StaticResource DangerButtonStyle}"
+                            Click="DeleteProfile_OnClick"/>
+                    <Button Content="Сохранить"
+                            Width="115"
+                            Margin="9,0,0,0"
+                            Click="SaveProfile_OnClick"/>
+                    <Button x:Name="ActivateButton"
+                            Content="▶  Активировать"
+                            Width="165"
+                            Margin="9,0,0,0"
+                            Style="{StaticResource PrimaryButtonStyle}"
+                            Click="ActivateProfile_OnClick"/>
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>

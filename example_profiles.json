@@ -1,0 +1,77 @@
+{
+  "profiles": [
+    {
+      "id": "gaming",
+      "name": "Gaming",
+      "description": "Игровая сессия без фоновой нагрузки",
+      "processes_to_close": [
+        "code.exe",
+        "slack.exe",
+        "outlook.exe"
+      ],
+      "processes_to_start": [
+        "C:\\Program Files (x86)\\Steam\\steam.exe",
+        "C:\\Program Files\\Discord\\Discord.exe"
+      ],
+      "optimizations": {
+        "clear_temp": true,
+        "clear_browser_cache": true,
+        "cleanup_recycle": true,
+        "disable_game_dvr": true,
+        "high_performance_power": true,
+        "cleanup_prefetch": false,
+        "disable_animations": false,
+        "disable_indexing": false
+      }
+    },
+    {
+      "id": "work",
+      "name": "Work",
+      "description": "Рабочий режим с IDE и браузером",
+      "processes_to_close": [
+        "steam.exe",
+        "discord.exe",
+        "vlc.exe"
+      ],
+      "processes_to_start": [
+        "C:\\Program Files\\Microsoft VS Code\\Code.exe",
+        "chrome.exe",
+        "outlook.exe"
+      ],
+      "optimizations": {
+        "clear_temp": true,
+        "clear_browser_cache": false,
+        "cleanup_recycle": false,
+        "disable_game_dvr": false,
+        "high_performance_power": false,
+        "cleanup_prefetch": false,
+        "disable_animations": false,
+        "disable_indexing": false
+      }
+    },
+    {
+      "id": "study",
+      "name": "Study",
+      "description": "Сфокусированная учёба",
+      "processes_to_close": [
+        "steam.exe",
+        "discord.exe",
+        "spotify.exe"
+      ],
+      "processes_to_start": [
+        "firefox.exe",
+        "notepad.exe"
+      ],
+      "optimizations": {
+        "clear_temp": true,
+        "clear_browser_cache": false,
+        "cleanup_recycle": false,
+        "disable_game_dvr": false,
+        "high_performance_power": false,
+        "cleanup_prefetch": false,
+        "disable_animations": false,
+        "disable_indexing": false
+      }
+    }
+  ]
+}

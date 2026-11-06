@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>ProfileOnPC</AssemblyName>
+    <RootNamespace>ProfileOnPC</RootNamespace>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>true</SelfContained>
+
+    <!--
+      Single-file для WPF-приложения распаковывает нативные библиотеки в %TEMP% при каждом
+      запуске. Если TEMP недоступен на запись (например, указывает на C:\Windows\Temp с
+      урезанными правами), exe молча завершается с кодом 0x800080A0 / 0x8000809F.
+      Поэтому по умолчанию собираем обычную папку: dist\ProfileOnPC.exe + его зависимости.
+      Одиночный файл при необходимости: dotnet publish -p:PublishSingleFile=true.
+    -->
+    <PublishSingleFile>false</PublishSingleFile>
+
+    <PublishTrimmed>false</PublishTrimmed>
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+  </PropertyGroup>
+
+</Project>
