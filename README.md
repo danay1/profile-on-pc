@@ -55,4 +55,4 @@ Example profile data is provided in `example_profiles.json`; it is a reference f
 
 ## License
 
-No license has been included. Add a license before accepting contributions or granting reuse rights.
+MIT — see [LICENSE](LICENSE).
